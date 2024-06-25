@@ -5,12 +5,12 @@ The code is described in detail in [this blog]().
 ## Installation
 
 ```
-% npm install
+$ npm install
 ```
 If you are using yarn:
 
 ```
-% yarn
+$ yarn
 ```
 
 ## Add connection env
@@ -23,8 +23,28 @@ DB_PORT=3306
 DB_USER="username"
 DB_PASSWORD="password"
 DB_NAME="database"
-DB_SSL_PATH="certificate"
+DB_URL="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}"
+```
+
+If your database server requires SSL for connections, you should specify the path to the SSL certificate and modify the `DB_URL`. Note that paths to certificates are resolved relative to the `./prisma` directory:
+
+```shell
+DB_SSL_PATH="certificate path"
 DB_URL="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?sslmode=require&sslcert=${DB_SSL_PATH}"
 ```
 
-`DB_SSL_PATH` is only necessary if your database server uses SSL. Certificate paths are resolved relative to the `./prisma` folder. If your database server does not use SSL, the `DB_URL` should be `mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`
+## Initialize
+
+To create tables in the database, you will use the Prisma migrate dev command:
+
+```
+$ npx prisma migrate dev --name init
+```
+
+## Seeding the database
+
+To populate the database with data, we will use Prisma Client and run this command:
+
+```
+$ npx prisma db seed
+```
