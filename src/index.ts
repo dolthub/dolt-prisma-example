@@ -6,6 +6,8 @@ import {
   createBranch,
   printActiveBranch,
   checkoutBranch,
+  printTables,
+  doltResetHard,
   printDiff,
 } from "./doltUtils";
 import { PrismaTransaction } from "./types";
@@ -82,3 +84,32 @@ async function updateDepartmentManagers(prisma: PrismaTransaction) {
 const prisma = new PrismaClient();
 
 printDiff(prisma, "departments");
+
+async function dropTableAndRollBack() {
+  const prisma = new PrismaClient();
+  try {
+    await prisma.$executeRaw`DROP TABLE dept_emp`;
+    await printTables(prisma);
+    await printStatus(prisma);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+dropTableAndRollBack();
+
+async function rollBack() {
+  const prisma = new PrismaClient();
+  try {
+    await doltResetHard(prisma);
+    console.log("Rolled back to the previous commit.");
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+rollBack();

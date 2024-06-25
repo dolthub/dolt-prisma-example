@@ -97,3 +97,21 @@ export async function printDiff(prisma: PrismaTransaction, table: string) {
   console.log(`Diff for ${table}:`);
   console.log(res);
 }
+
+export async function printTables(prisma: PrismaTransaction) {
+  const res = await prisma.$queryRaw`SHOW TABLES`;
+  console.log("Tables in database:", res);
+}
+
+export async function doltResetHard(
+  prisma: PrismaTransaction,
+  commit?: string
+) {
+  if (commit) {
+    await prisma.$executeRaw`CALL DOLT_RESET('--hard', ${commit})`;
+    console.log("Resetting to commit:", commit);
+  } else {
+    await prisma.$executeRaw`CALL DOLT_RESET('--hard')`;
+    console.log("Resetting to HEAD");
+  }
+}
