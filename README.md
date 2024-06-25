@@ -5,11 +5,6 @@ The code is described in detail in [this blog]().
 ## Installation
 
 ```
-$ npm install
-```
-If you are using yarn:
-
-```
 $ yarn
 ```
 
