@@ -18,17 +18,11 @@ model Employee {
   birth_date DateTime
   first_name String       @db.VarChar(14)
   last_name  String       @db.VarChar(16)
-  gender     Gender
   hire_date  DateTime
   dept_emps  DeptEmp[]
   Department Department[]
 
   @@map("employees")
-}
-
-enum Gender {
-  M
-  F
 }
 
 model Department {

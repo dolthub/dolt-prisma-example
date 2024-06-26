@@ -115,3 +115,8 @@ export async function doltResetHard(
     console.log("Resetting to HEAD");
   }
 }
+
+export async function doltMerge(prisma: PrismaTransaction, branch: string) {
+  await prisma.$executeRaw`CALL DOLT_MERGE(${branch})`;
+  console.log("Merge complete for ", branch);
+}

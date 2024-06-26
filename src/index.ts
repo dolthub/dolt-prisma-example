@@ -9,6 +9,7 @@ import {
   printTables,
   doltResetHard,
   printDiff,
+  doltMerge,
 } from "./doltUtils";
 import { PrismaTransaction } from "./types";
 
@@ -85,7 +86,7 @@ const prisma = new PrismaClient();
 
 printDiff(prisma, "departments");
 
-async function dropTableAndRollBack() {
+async function dropTableDeptEmp() {
   const prisma = new PrismaClient();
   try {
     await prisma.$executeRaw`DROP TABLE dept_emp`;
@@ -98,7 +99,7 @@ async function dropTableAndRollBack() {
   }
 }
 
-dropTableAndRollBack();
+// dropTableDeptEmp();
 
 async function rollBack() {
   const prisma = new PrismaClient();
@@ -113,3 +114,43 @@ async function rollBack() {
 }
 
 rollBack();
+
+async function dropColumnGender() {
+  const prisma = new PrismaClient();
+  try {
+    await prisma.$transaction(async (tx) => {
+      await createBranch(tx, "drop-column");
+      await checkoutBranch(tx, "drop-column");
+      await printActiveBranch(tx);
+      await tx.$executeRaw`ALTER TABLE employees DROP COLUMN gender`;
+      await doltCommit(tx, "LiuLiu <liu@dolthub.com>", "Drop column");
+      await printCommitLog(tx);
+    });
+    console.log("All operations completed successfully.");
+  } catch (error) {
+    console.error("An error occurred:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+dropColumnGender();
+
+async function mergeBranch() {
+  const prisma = new PrismaClient();
+  try {
+    await prisma.$transaction(async (tx) => {
+      await checkoutBranch(tx, "main");
+      await printActiveBranch(tx);
+      await doltMerge(tx, "add-manager");
+      await printCommitLog(tx);
+    });
+    console.log("All operations completed successfully.");
+  } catch (error) {
+    console.error("An error occurred:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+mergeBranch();
