@@ -1,6 +1,6 @@
 # Getting started with [Dolt](https://doltdb.com) and [Prisma](https://www.prisma.io/)
 
-The code is described in detail in [this blog]().
+The code is described in detail in [this blog](https://www.dolthub.com/blog/2024-06-28-dolt-and-prisma/).
 
 ## Installation
 
