@@ -46,7 +46,7 @@ $ npx prisma db seed
 
 ## Running the scripts
 
-To execute the operations (create table, commit changes, etc) in `src/index.ts`, run the script:
+To execute database operations (create tables, commit changes, etc.) using `src/index.ts`, run:
 
 ```
 npx ts-node src/index.ts
