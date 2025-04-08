@@ -43,3 +43,11 @@ To populate the database with data, we will use Prisma Client and run this comma
 ```
 $ npx prisma db seed
 ```
+
+## Running the scripts
+
+To execute the operations (create table, commit changes, etc) in `src/index.ts`, run the script:
+
+```
+npx ts-node src/index.ts
+```
