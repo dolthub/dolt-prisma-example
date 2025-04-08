@@ -18,14 +18,14 @@ DB_PORT=3306
 DB_USER="username"
 DB_PASSWORD="password"
 DB_NAME="database"
-DB_URL="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}"
+DB_URL="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
 ```
 
 If your database server requires SSL for connections, you should specify the path to the SSL certificate and modify the `DB_URL`. Note that paths to certificates are resolved relative to the `./prisma` directory:
 
 ```shell
 DB_SSL_PATH="certificate path"
-DB_URL="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?sslmode=require&sslcert=${DB_SSL_PATH}"
+DB_URL="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require&sslcert=${DB_SSL_PATH}"
 ```
 
 ## Initialize
