@@ -14,13 +14,14 @@ generator client {
 }
 
 model Employee {
-  emp_no     Int          @id
-  birth_date DateTime
-  first_name String       @db.VarChar(14)
-  last_name  String       @db.VarChar(16)
-  hire_date  DateTime
-  dept_emps  DeptEmp[]
-  Department Department[]
+  emp_no      Int          @id
+  birth_date  DateTime
+  first_name  String       @db.VarChar(14)
+  last_name   String       @db.VarChar(16)
+  hire_date   DateTime
+  dept_emps   DeptEmp[]
+  department  Department[]
+  col_to_drop String
 
   @@map("employees")
 }

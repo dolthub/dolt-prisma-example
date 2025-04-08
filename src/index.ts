@@ -13,8 +13,9 @@ import {
 } from "./doltUtils";
 import { PrismaTransaction } from "./types";
 
+const prisma = new PrismaClient();
+
 async function createTablesCommit() {
-  const prisma = new PrismaClient();
   try {
     await doltCommit(prisma, "LiuLiu <liu@dolthub.com>", "Create tables");
     await printCommitLog(prisma);
@@ -26,10 +27,7 @@ async function createTablesCommit() {
   }
 }
 
-createTablesCommit();
-
 async function updateManager() {
-  const prisma = new PrismaClient();
   try {
     await prisma.$transaction(async (tx) => {
       await createBranch(tx, "add-manager");
@@ -47,9 +45,9 @@ async function updateManager() {
   }
 }
 
-updateManager();
-
 async function updateDepartmentManagers(prisma: PrismaTransaction) {
+  const departments = await prisma.department.findMany();
+  console.log("Existing departments:", departments);
   // Update Marketing
   await prisma.department.update({
     where: { dept_no: "d001" },
@@ -82,12 +80,8 @@ async function updateDepartmentManagers(prisma: PrismaTransaction) {
 
   console.log("Department managers updated successfully.");
 }
-const prisma = new PrismaClient();
-
-printDiff(prisma, "departments");
 
 async function dropTableDeptEmp() {
-  const prisma = new PrismaClient();
   try {
     await prisma.$executeRaw`DROP TABLE dept_emp`;
     await printTables(prisma);
@@ -99,10 +93,7 @@ async function dropTableDeptEmp() {
   }
 }
 
-// dropTableDeptEmp();
-
 async function rollBack() {
-  const prisma = new PrismaClient();
   try {
     await doltResetHard(prisma);
     console.log("Rolled back to the previous commit.");
@@ -113,16 +104,13 @@ async function rollBack() {
   }
 }
 
-rollBack();
-
 async function dropColumnGender() {
-  const prisma = new PrismaClient();
   try {
     await prisma.$transaction(async (tx) => {
       await createBranch(tx, "drop-column");
       await checkoutBranch(tx, "drop-column");
       await printActiveBranch(tx);
-      await tx.$executeRaw`ALTER TABLE employees DROP COLUMN gender`;
+      await tx.$executeRaw`ALTER TABLE employees DROP COLUMN col_to_drop`;
       await doltCommit(tx, "LiuLiu <liu@dolthub.com>", "Drop column");
       await printCommitLog(tx);
     });
@@ -134,10 +122,7 @@ async function dropColumnGender() {
   }
 }
 
-dropColumnGender();
-
 async function mergeBranch() {
-  const prisma = new PrismaClient();
   try {
     await prisma.$transaction(async (tx) => {
       await checkoutBranch(tx, "main");
@@ -153,4 +138,19 @@ async function mergeBranch() {
   }
 }
 
-mergeBranch();
+async function main() {
+  await createTablesCommit();
+  await updateManager();
+
+  await printDiff(prisma, "departments");
+
+  await dropTableDeptEmp();
+
+  await rollBack();
+
+  await dropColumnGender();
+
+  await mergeBranch();
+}
+
+main();
