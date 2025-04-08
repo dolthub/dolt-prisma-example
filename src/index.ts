@@ -13,8 +13,9 @@ import {
 } from "./doltUtils";
 import { PrismaTransaction } from "./types";
 
+const prisma = new PrismaClient();
+
 async function createTablesCommit() {
-  const prisma = new PrismaClient();
   try {
     await doltCommit(prisma, "LiuLiu <liu@dolthub.com>", "Create tables");
     await printCommitLog(prisma);
@@ -27,7 +28,6 @@ async function createTablesCommit() {
 }
 
 async function updateManager() {
-  const prisma = new PrismaClient();
   try {
     await prisma.$transaction(async (tx) => {
       await createBranch(tx, "add-manager");
@@ -82,7 +82,6 @@ async function updateDepartmentManagers(prisma: PrismaTransaction) {
 }
 
 async function dropTableDeptEmp() {
-  const prisma = new PrismaClient();
   try {
     await prisma.$executeRaw`DROP TABLE dept_emp`;
     await printTables(prisma);
@@ -95,7 +94,6 @@ async function dropTableDeptEmp() {
 }
 
 async function rollBack() {
-  const prisma = new PrismaClient();
   try {
     await doltResetHard(prisma);
     console.log("Rolled back to the previous commit.");
@@ -107,7 +105,6 @@ async function rollBack() {
 }
 
 async function dropColumnGender() {
-  const prisma = new PrismaClient();
   try {
     await prisma.$transaction(async (tx) => {
       await createBranch(tx, "drop-column");
@@ -126,7 +123,6 @@ async function dropColumnGender() {
 }
 
 async function mergeBranch() {
-  const prisma = new PrismaClient();
   try {
     await prisma.$transaction(async (tx) => {
       await checkoutBranch(tx, "main");
@@ -146,8 +142,6 @@ async function main() {
   await createTablesCommit();
   await updateManager();
 
-  const prisma = new PrismaClient();
-
   await printDiff(prisma, "departments");
 
   await dropTableDeptEmp();
@@ -156,7 +150,7 @@ async function main() {
 
   await dropColumnGender();
 
-  mergeBranch();
+  await mergeBranch();
 }
 
 main();

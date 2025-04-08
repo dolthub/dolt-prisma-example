@@ -20,7 +20,7 @@ model Employee {
   last_name   String       @db.VarChar(16)
   hire_date   DateTime
   dept_emps   DeptEmp[]
-  Department  Department[]
+  department  Department[]
   col_to_drop String
 
   @@map("employees")
