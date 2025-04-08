@@ -35,6 +35,7 @@ async function main() {
             first_name: emp.first_name,
             birth_date: new Date(emp.birth_date),
             hire_date: new Date(emp.hire_date),
+            col_to_drop: "",
           },
         });
       }
