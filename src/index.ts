@@ -1,15 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import {
-  doltCommit,
-  printCommitLog,
-  printStatus,
-  createBranch,
-  printActiveBranch,
   checkoutBranch,
-  printTables,
-  doltResetHard,
-  printDiff,
+  createBranch,
+  doltCommit,
   doltMerge,
+  doltResetHard,
+  printActiveBranch,
+  printCommitLog,
+  printDiff,
+  printStatus,
+  printTables,
 } from "./doltUtils";
 import { PrismaTransaction } from "./types";
 
@@ -45,35 +45,35 @@ async function updateManager() {
   }
 }
 
-async function updateDepartmentManagers(prisma: PrismaTransaction) {
-  const departments = await prisma.department.findMany();
+async function updateDepartmentManagers(tx: PrismaTransaction) {
+  const departments = await tx.department.findMany();
   console.log("Existing departments:", departments);
   // Update Marketing
-  await prisma.department.update({
+  await tx.department.update({
     where: { dept_no: "d001" },
     data: { manager_id: 10001 },
   });
 
   // Update Finance
-  await prisma.department.update({
+  await tx.department.update({
     where: { dept_no: "d002" },
     data: { manager_id: 10002 },
   });
 
   // Update Human Resources
-  await prisma.department.update({
+  await tx.department.update({
     where: { dept_no: "d003" },
     data: { manager_id: 10003 },
   });
 
   // Update Production
-  await prisma.department.update({
+  await tx.department.update({
     where: { dept_no: "d004" },
     data: { manager_id: 10004 },
   });
 
   // Update Development
-  await prisma.department.update({
+  await tx.department.update({
     where: { dept_no: "d005" },
     data: { manager_id: 10005 },
   });
@@ -104,7 +104,7 @@ async function rollBack() {
   }
 }
 
-async function dropColumnGender() {
+async function dropColumn() {
   try {
     await prisma.$transaction(async (tx) => {
       await createBranch(tx, "drop-column");
@@ -141,15 +141,10 @@ async function mergeBranch() {
 async function main() {
   await createTablesCommit();
   await updateManager();
-
   await printDiff(prisma, "departments");
-
   await dropTableDeptEmp();
-
   await rollBack();
-
-  await dropColumnGender();
-
+  await dropColumn();
   await mergeBranch();
 }
 
